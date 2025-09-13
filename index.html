@@ -160,6 +160,8 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             transition: all 0.3s;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .tool-card:hover {
@@ -200,6 +202,7 @@
             padding: 25px;
             position: relative;
             z-index: 2;
+            flex-grow: 1;
         }
 
         .tool-card-body h3 {
@@ -216,6 +219,7 @@
             padding: 0 25px 25px;
             position: relative;
             z-index: 2;
+            text-align: center;
         }
 
         /* Categories Section */
@@ -426,6 +430,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             position: relative;
             z-index: 3;
+            display: inline-block;
+            text-decoration: none;
         }
 
         .btn-primary:hover {
@@ -554,54 +560,51 @@
                 </div>
 
                 <div class="tools-grid">
-            <!-- Image Compressor Card -->
-            <a href="img-compress.html" class="tool-card-link">
-                <div class="tool-card">
-                    <div class="tool-card-header">
-                        <i class="fas fa-compress-arrows-alt"></i>
-                        <h3>Image Compressor</h3>
+                    <!-- Image Compressor Card -->
+                    <div class="tool-card">
+                        <a href="img-compress.html" class="tool-card-link"></a>
+                        <div class="tool-card-header">
+                            <i class="fas fa-compress-arrows-alt"></i>
+                            <h3>Image Compressor</h3>
+                        </div>
+                        <div class="tool-card-body">
+                            <p>Reduce image file size without losing quality. Perfect for websites and social media.</p>
+                        </div>
+                        <div class="tool-card-footer">
+                            <a href="img-compress.html" class="btn-primary">Use Tool</a>
+                        </div>
                     </div>
-                    <div class="tool-card-body">
-                        <p>Reduce image file size without losing quality. Perfect for websites and social media.</p>
-                    </div>
-                    <div class="tool-card-footer">
-                        <a href="img-compress.html" class="btn-primary">Use Tool</a>
-                    </div>
-                </div>
-            </a>
 
                     <!-- PDF Merger Card -->
-            <a href="pdf-merger.html" class="tool-card-link">
-                <div class="tool-card">
-                    <div class="tool-card-header">
-                        <i class="fas fa-file-pdf"></i>
-                        <h3>PDF Merger</h3>
+                    <div class="tool-card">
+                        <a href="pdf-merger.html" class="tool-card-link"></a>
+                        <div class="tool-card-header">
+                            <i class="fas fa-file-pdf"></i>
+                            <h3>PDF Merger</h3>
+                        </div>
+                        <div class="tool-card-body">
+                            <p>Combine multiple PDF files into a single document in just a few clicks.</p>
+                        </div>
+                        <div class="tool-card-footer">
+                            <a href="pdf-merger.html" class="btn-primary">Use Tool</a>
+                        </div>
                     </div>
-                    <div class="tool-card-body">
-                        <p>Combine multiple PDF files into a single document in just a few clicks.</p>
-                    </div>
-                    <div class="tool-card-footer">
-                        <a href="pdf-merger.html" class="btn-primary">Use Tool</a>
-                    </div>
-                </div>
-            </a>
 
                     <!-- Format Converter Card -->
-            <a href="format-converter.html" class="tool-card-link">
-                <div class="tool-card">
-                    <div class="tool-card-header">
-                        <i class="fas fa-exchange-alt"></i>
-                        <h3>Format Converter</h3>
-                    </div>
-                    <div class="tool-card-body">
-                        <p>Convert images between JPG, PNG, WEBP, and other formats effortlessly.</p>
-                    </div>
-                    <div class="tool-card-footer">
-                        <a href="format-converter.html" class="btn-primary">Use Tool</a>
+                    <div class="tool-card">
+                        <a href="format-converter.html" class="tool-card-link"></a>
+                        <div class="tool-card-header">
+                            <i class="fas fa-exchange-alt"></i>
+                            <h3>Format Converter</h3>
+                        </div>
+                        <div class="tool-card-body">
+                            <p>Convert images between JPG, PNG, WEBP, and other formats effortlessly.</p>
+                        </div>
+                        <div class="tool-card-footer">
+                            <a href="format-converter.html" class="btn-primary">Use Tool</a>
+                        </div>
                     </div>
                 </div>
-            </a>
-        </div>
             </section>
 
             <!-- Categories Section -->
