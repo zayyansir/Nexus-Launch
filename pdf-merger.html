@@ -86,6 +86,13 @@
             margin-bottom: 20px;
             transition: all 0.3s;
             cursor: pointer;
+            position: relative;
+        }
+
+        .upload-area.drag-over {
+            background: #f0f4ff;
+            border-color: #b21f1f;
+            transform: scale(1.02);
         }
 
         .upload-area:hover {
@@ -110,7 +117,13 @@
         }
 
         #file-input {
-            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
         }
 
         .pdf-list {
@@ -163,7 +176,7 @@
         }
 
         .pdf-info p {
-            color: 777;
+            color: #777;
             font-size: 0.9rem;
         }
 
@@ -336,6 +349,46 @@
             color: white;
             margin-top: 40px;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateX(150%);
+            transition: transform 0.3s ease-out;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .notification.success {
+            border-left: 4px solid #2ecc71;
+        }
+
+        .notification i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .notification.error i {
+            color: #e74c3c;
+        }
+
+        .notification.success i {
+            color: #2ecc71;
         }
 
         /* Media Queries for Responsiveness */
@@ -541,6 +594,16 @@
         <p>This tool uses client-side processing - your PDFs never leave your computer.</p>
     </footer>
 
+    <div class="notification error" id="error-notification">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="error-message"></span>
+    </div>
+
+    <div class="notification success" id="success-notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="success-message"></span>
+    </div>
+
     <script>
         // DOM Elements
         const fileInput = document.getElementById('file-input');
@@ -552,14 +615,25 @@
         const statusText = document.getElementById('status-text');
         const mergeBtn = document.getElementById('merge-btn');
         const downloadBtn = document.getElementById('download-btn');
+        const errorNotification = document.getElementById('error-notification');
+        const errorMessage = document.getElementById('error-message');
+        const successNotification = document.getElementById('success-notification');
+        const successMessage = document.getElementById('success-message');
 
         // Variables to store PDF data
         let pdfFiles = [];
         let mergedPdf = null;
 
         // Event Listeners
-        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('click', (e) => {
+            // Only trigger file input if the click wasn't on a button or other interactive element
+            if (e.target.tagName !== 'INPUT') {
+                fileInput.click();
+            }
+        });
+        
         uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
         uploadArea.addEventListener('drop', handleDrop);
         fileInput.addEventListener('change', handleFileSelect);
         mergeBtn.addEventListener('click', mergePdfs);
@@ -588,15 +662,19 @@
         function handleDragOver(e) {
             e.preventDefault();
             e.stopPropagation();
-            uploadArea.style.background = '#f0f4ff';
-            uploadArea.style.borderColor = '#b21f1f';
+            uploadArea.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('drag-over');
         }
 
         function handleDrop(e) {
             e.preventDefault();
             e.stopPropagation();
-            uploadArea.style.background = '';
-            uploadArea.style.borderColor = '#1a2a6c';
+            uploadArea.classList.remove('drag-over');
             
             const files = e.dataTransfer.files;
             processFiles(files);
@@ -605,17 +683,30 @@
         function handleFileSelect(e) {
             const files = e.target.files;
             processFiles(files);
+            // Reset the file input to allow selecting the same file again
+            e.target.value = '';
         }
 
         function processFiles(files) {
+            if (files.length === 0) return;
+            
+            let validFilesAdded = false;
+            
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 if (file.type === 'application/pdf') {
                     pdfFiles.push(file);
+                    validFilesAdded = true;
                 }
             }
             
+            if (!validFilesAdded) {
+                showError('Please select only PDF files.');
+                return;
+            }
+            
             updatePdfList();
+            showSuccess('Files added successfully!');
         }
 
         function updatePdfList() {
@@ -635,7 +726,7 @@
             }
             
             // Add PDF items
-            pdfFiles.forEach((file, index) {
+            pdfFiles.forEach((file, index) => {
                 const pdfItem = createPdfItem(file, index);
                 pdfList.appendChild(pdfItem);
             });
@@ -705,7 +796,7 @@
                 progressContainer.style.display = 'block';
                 
                 // Create a new PDF document
-                const mergedPdfDoc = await PDFLib.PPDFDocument.create();
+                const mergedPdfDoc = await PDFLib.PDFDocument.create();
                 
                 // Process each PDF file
                 for (let i = 0; i < pdfFiles.length; i++) {
@@ -727,9 +818,9 @@
                         const pages = await mergedPdfDoc.copyPages(pdfDoc, pdfDoc.getPageIndices());
                         
                         // Add pages to merged document
-                        pages.forEach(page => {
+                        for (const page of pages) {
                             mergedPdfDoc.addPage(page);
-                        });
+                        }
                     } catch (err) {
                         console.error(`Error processing ${file.name}:`, err);
                         statusText.textContent = `Error processing ${file.name}. Please try with a different PDF.`;
@@ -754,6 +845,7 @@
                 downloadBtn.disabled = false;
                 
                 mergeBtn.textContent = 'Merge Successful!';
+                showSuccess('PDFs merged successfully! Ready for download.');
                 
             } catch (error) {
                 console.error('Error merging PDFs:', error);
@@ -762,6 +854,7 @@
                 
                 mergeBtn.textContent = 'Error - Try Again';
                 mergeBtn.disabled = false;
+                showError('Failed to merge PDFs. Please try again.');
             }
         }
 
@@ -778,12 +871,31 @@
             if (!mergedPdf) return;
             
             saveAs(mergedPdf, 'merged-document.pdf');
+            showSuccess('Download started!');
         }
 
         function formatFileSize(bytes) {
             if (bytes < 1024) return bytes + ' B';
             else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
             else return (bytes / 1048576).toFixed(2) + ' MB';
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorNotification.classList.add('show');
+            
+            setTimeout(() => {
+                errorNotification.classList.remove('show');
+            }, 3000);
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successNotification.classList.add('show');
+            
+            setTimeout(() => {
+                successNotification.classList.remove('show');
+            }, 3000);
         }
 
         // Initialize
