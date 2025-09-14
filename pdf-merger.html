@@ -163,7 +163,7 @@
         }
 
         .pdf-info p {
-            color: #777;
+            color: 777;
             font-size: 0.9rem;
         }
 
@@ -467,14 +467,17 @@
             </div>
 
             <div class="ad-space">
-                <div>
-                    <h3>Advertisement</h3>
-                    <p>Ad Space (300x250)</p>
-                    <!-- Adsterra Ad Code -->
-                    <div id="adsterra-ad">
-                        <!-- Insert Adsterra Ad Unit ID here -->
-                    </div>
-                </div>
+                <!-- Adsterra Ad Code -->
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '5477de2ed392c735980723ad97acecba',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/5477de2ed392c735980723ad97acecba/invoke.js"></script>
             </div>
         </div>
 
@@ -620,7 +623,7 @@
             }
             
             // Add PDF items
-            pdfFiles.forEach((file, index) => {
+            pdfFiles.forEach((file, index) {
                 const pdfItem = createPdfItem(file, index);
                 pdfList.appendChild(pdfItem);
             });
@@ -751,7 +754,7 @@
         }
 
         function readFileAsArrayBuffer(file) {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) {
                 const reader = new FileReader();
                 reader.onload = () => resolve(reader.result);
                 reader.onerror = reject;
